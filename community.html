@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Community | IUEA Connect</title><meta name="description" content="Student collaboration across all IUEA faculties."><link rel="stylesheet" href="style.css"></head><body>
+<section class="page-hero"><div class="wrap"><h1>Community</h1><p class="lead">Post ideas, find teammates, start study groups. Open to every faculty.</p></div></section>
+<section><div class="wrap"><h2>Share a project idea or request</h2>
+<form class="card" id="postForm"><input name="name" placeholder="Your name" required maxlength="60">
+<select name="faculty"><option>Engineering</option><option>Science and Technology</option><option>Business and Management</option><option>Law</option><option>Other</option></select><select name="type"><option>Project idea</option><option>Looking for teammates</option><option>Question</option><option>Announcement</option></select>
+<input name="title" placeholder="Title" required maxlength="100"><textarea name="body" rows="3" placeholder="Describe what you need" maxlength="500"></textarea>
+<button class="btn" type="submit">Post</button></form><h2 style="margin-top:30px">Latest posts</h2><div class="grid" id="postList"></div></div></section>
+<section><div class="wrap"><h2>Start a study group</h2>
+<form class="card" id="groupForm"><select name="faculty"><option>Engineering</option><option>Science and Technology</option><option>Business and Management</option><option>Law</option><option>Other</option></select><input name="title" placeholder="Group name or course" required maxlength="100">
+<textarea name="body" rows="2" placeholder="When and where will you meet?" maxlength="300"></textarea><input type="email" name="contact" placeholder="Contact email" required>
+<button class="btn" type="submit">Create group</button></form><h2 style="margin-top:30px">Study groups</h2><div class="grid" id="groupList"></div></div></section>
+<script src="app.js"></script></body></html>
