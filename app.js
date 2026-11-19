@@ -17,9 +17,10 @@ document.body.insertAdjacentHTML("afterbegin",`<header class="site-header"><nav 
 
 document.body.insertAdjacentHTML("beforeend",`<footer class="site-footer"><div class="wrap">
 <div class="foot-cta"><img src="images/iuea-logo.png" alt="IUEA logo" onerror="this.style.display='none'"><p>Kampala · Science, Business, Engineering &amp; Law.</p>
-<a class="btn alt" href="${SIGNUP}" target="_blank" rel="noopener">Join IUEA</a><a class="btn ghost" href="mailto:info@iuea.ac.ug">Request Info</a></div>
+<a class="btn alt" href="${SIGNUP}" target="_blank" rel="noopener">Join IUEA</a><a class="btn ghost" href="mailto:info@iuea.ac.ug">Request Info</a><a class="btn ghost" href="https://gabrielmukamba.github.io/iuea-equal/" target="_blank" rel="noopener">IUEA EQUAL</a></div>
 <div class="foot-grid"><div><h4>Quick links</h4><ul>
 <li><a href="community.html">Community</a></li><li><a href="resources.html">Resources</a></li><li><a href="apply.html">Apply</a></li><li><a href="contact.html">Contact</a></li><li><a href="privacy.html">Privacy</a></li>
+<li><a href="https://gabrielmukamba.github.io/iuea-equal/" target="_blank" rel="noopener">IUEA EQUAL</a></li>
 <li><a href="https://iuea.ac.ug" target="_blank" rel="noopener">IUEA website</a></li><li><a href="https://vote.iuea.ac.ug/vote" target="_blank" rel="noopener">IUEA Ballot</a></li></ul></div>
 <div><h4>Contact</h4><address>Plot No. 11/13, Kansanga Ggaba Rd, P.O. Box 23332, Kampala, Uganda
 <a href="tel:+256703722300">+256 703 722 300</a><a href="tel:800330330">Toll-Free 800 330 330</a><a href="mailto:info@iuea.ac.ug">info@iuea.ac.ug</a></address>${SOCIAL}</div></div>

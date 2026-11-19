@@ -1,5 +1,13 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Community | IUEA Connect</title><meta name="description" content="Student collaboration across all IUEA faculties."><link rel="stylesheet" href="style.css"></head><body>
-<section class="page-hero"><div class="wrap"><h1>Community</h1><p class="lead">Post ideas, find teammates, start study groups. Open to every faculty.</p></div></section>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IUEA Student Community Chat and Study Groups | IUEA Connect</title>
+<meta name="description" content="Join the IUEA student community: a live group chat for every faculty, project ideas, teammates and study groups at the International University of East Africa.">
+<link rel="canonical" href="https://gabrielmukamba.github.io/iuea-connect/community.html"><link rel="icon" href="images/iuea-logo.png"><meta name="theme-color" content="#6e1220">
+<meta property="og:type" content="website"><meta property="og:site_name" content="IUEA Connect"><meta property="og:title" content="IUEA Student Community Chat and Study Groups | IUEA Connect">
+<meta property="og:description" content="A live group chat and study groups for students from every faculty at IUEA."><meta property="og:url" content="https://gabrielmukamba.github.io/iuea-connect/community.html">
+<meta property="og:image" content="https://gabrielmukamba.github.io/iuea-connect/images/iuea-logo.png"><meta property="og:image:alt" content="IUEA logo"><meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="extra.css"></head><body>
+<section class="page-hero"><div class="wrap"><h1>Community</h1><p class="lead">Chat with every faculty, post ideas, find teammates and start study groups.</p>
+<a class="btn alt" href="#chat" style="margin-top:14px">Join the community chat</a></div></section>
 <section><div class="wrap"><h2>Share a project idea or request</h2>
 <form class="card" id="postForm"><input name="name" placeholder="Your name" required maxlength="60">
 <select name="faculty"><option>Engineering</option><option>Science and Technology</option><option>Business and Management</option><option>Law</option><option>Other</option></select><select name="type"><option>Project idea</option><option>Looking for teammates</option><option>Question</option><option>Announcement</option></select>
@@ -9,4 +17,10 @@
 <form class="card" id="groupForm"><select name="faculty"><option>Engineering</option><option>Science and Technology</option><option>Business and Management</option><option>Law</option><option>Other</option></select><input name="title" placeholder="Group name or course" required maxlength="100">
 <textarea name="body" rows="2" placeholder="When and where will you meet?" maxlength="300"></textarea><input type="email" name="contact" placeholder="Contact email" required>
 <button class="btn" type="submit">Create group</button></form><h2 style="margin-top:30px">Study groups</h2><div class="grid" id="groupList"></div></div></section>
-<script src="app.js"></script></body></html>
+<section id="chat"><div class="wrap"><h2>Community chat</h2><p>One live room for every IUEA student. Type your name, say hello and chat with students from all faculties.</p>
+<div class="chat"><div class="chat-head"><div>IUEA Community</div><span>Live</span></div><div id="chatBox"><p>Loading messages...</p></div>
+<form class="chat-form" id="chatForm"><input id="chatName" placeholder="Your name" maxlength="40" required autocomplete="nickname">
+<input id="chatText" placeholder="Type a message" maxlength="500" required autocomplete="off"><button class="btn alt" type="submit">Send</button></form></div>
+<p class="status" id="chatErr" hidden></p>
+<div class="note"><p><b>Chat rules:</b> be respectful, no hate, bullying or spam, and do not share phone numbers, passwords or other private details. Messages are public and visible to anyone with this page. The founder can remove messages that break these rules.</p></div></div></section>
+<script src="app.js"></script><script type="module" src="firebase.js"></script></body></html>
