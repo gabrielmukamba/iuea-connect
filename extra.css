@@ -1,14 +1,64 @@
-.chat{display:flex;flex-direction:column;height:min(72vh,640px);background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+[hidden]{display:none!important}
+.btn.sm{padding:10px 18px;min-height:44px;font-size:.95rem;margin:0;width:auto}
+.status{margin-top:12px;color:var(--gold)}
+.note{border:1px solid var(--gold);border-radius:12px;padding:16px;color:var(--mute);margin-top:20px}.note p{margin:0}
+.stats{display:flex;gap:40px;flex-wrap:wrap;margin-top:30px}.stats b{display:block;font-size:2.4rem;color:var(--gold)}
+.members{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:30px;padding:8px 18px;font-weight:700;color:#fff;margin-right:10px}
+.members b{color:var(--gold);font-size:1.25rem}
+.tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.tabs .btn{margin:0;width:auto;padding:10px 20px;min-height:44px}
+.authform{display:grid;gap:14px}
+.userbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.userbar .btn{margin:0;width:auto;min-height:40px;padding:8px 18px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.filebtn{display:inline-block;border:2px solid var(--gold);color:var(--gold);border-radius:30px;padding:10px 18px;cursor:pointer;font-weight:600;justify-self:start}
+
+.post{padding:20px;margin-bottom:18px}
+.post .head{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--maroon);color:var(--gold);display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.post .meta{line-height:1.3}.post .meta small{color:var(--mute)}
+.ptext{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}
+.post img.photo{width:100%;max-height:440px;object-fit:cover;border-radius:12px;margin:8px 0}
+.actions{display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:10px;padding-top:8px}
+.actions button{background:none;border:0;color:var(--ink);font:inherit;font-weight:600;cursor:pointer;padding:8px 12px;border-radius:8px;min-height:44px}
+.actions button.on{color:var(--gold)}.actions button:hover{background:#ffffff12}
+.comments{margin-top:10px}
+.comment{background:#120a0c;border-radius:12px;padding:8px 12px;margin-bottom:6px;overflow-wrap:anywhere}
+.comment b{color:var(--gold);font-size:.85rem}
+.cform{display:flex;gap:8px;margin-top:8px}.cform input{flex:1;min-width:0}
+
+.chat{display:flex;flex-direction:column;height:min(75vh,680px);background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .chat-head{padding:14px 18px;background:var(--maroon);display:flex;justify-content:space-between;align-items:center;color:#fff;font-weight:700}
 .chat-head span{color:var(--gold);font-size:.9rem}
+.chat-body{position:relative;flex:1;min-height:0;display:flex}
 #chatBox{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#120a0c}
+.gate{position:absolute;inset:0;background:#120a0cf2;display:grid;place-items:center;text-align:center;padding:20px;color:var(--mute)}
 .msg{max-width:82%;padding:8px 12px;border-radius:14px;background:#2a1a1d;align-self:flex-start;overflow-wrap:anywhere;white-space:pre-wrap}
 .msg.me{align-self:flex-end;background:var(--red)}
 .msg b{display:block;color:var(--gold);font-size:.8rem}
 .msg small{display:block;text-align:right;opacity:.7;font-size:.7rem}
-.chat-form{display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:var(--card);border-top:1px solid var(--line)}
-.chat-form #chatName{flex:1 1 100%}
-.chat-form #chatText{flex:1 1 0;min-width:0}
-.chat-form .btn{margin:0;width:auto}
-.status{margin-top:12px;color:var(--gold)}
-.note{border:1px solid var(--gold);border-radius:12px;padding:16px;color:var(--mute);margin-top:20px}.note p{margin:0}
+.msg .media{max-width:100%;max-height:300px;border-radius:10px;display:block;margin-top:4px}
+.sticker{font-size:3rem;line-height:1.1}
+.filecard{display:block;background:#0f0b0c66;border-radius:10px;padding:10px;color:var(--ink);text-decoration:none;margin-top:4px}
+.filecard em{display:block;font-size:.75rem;color:var(--gold);font-style:normal}
+.sheet{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px;background:#1d1417;border-top:1px solid var(--line)}
+.sheet button{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:12px 4px;font:inherit;font-size:.8rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+.sheet button span{font-size:1.5rem}
+.panel{padding:10px;background:#1d1417;border-top:1px solid var(--line)}
+.ptabs{display:flex;gap:6px;margin-bottom:8px}
+.ptabs button{background:none;border:0;color:var(--mute);font:inherit;font-weight:700;padding:6px 14px;border-radius:20px;cursor:pointer}
+.ptabs button.on{background:var(--maroon);color:#fff}
+.emojigrid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;max-height:170px;overflow-y:auto}
+.emojigrid button{background:none;border:0;font-size:1.5rem;cursor:pointer;padding:4px;min-height:40px}
+.stickergrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:190px;overflow-y:auto}
+.stickergrid button{background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:2.4rem;cursor:pointer;min-height:64px}
+.chat-form{display:flex;align-items:center;gap:6px;padding:10px;background:var(--card);border-top:1px solid var(--line)}
+.chat-form #chatText{flex:1;min-width:0;border-radius:24px}
+.chat-form .ic{background:none;border:0;font-size:1.4rem;cursor:pointer;min-width:40px;min-height:44px;color:var(--ink)}
+.chat-form .send{background:var(--gold);color:#2a0b12;border:0;border-radius:50%;width:46px;height:46px;font-size:1.2rem;cursor:pointer;flex-shrink:0}
+
+.duo{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;border:4px solid var(--gold);border-radius:18px;scrollbar-width:none}
+.duo::-webkit-scrollbar{display:none}
+.founder .duo img{flex:0 0 100%;width:100%;min-height:300px;object-fit:cover;scroll-snap-align:center;border:0;border-radius:0}
+.duo-hint{text-align:center;font-size:.85rem;color:var(--mute);margin-top:6px}
+@media(max-width:600px){.row2{grid-template-columns:1fr}.sheet{grid-template-columns:repeat(3,1fr)}}

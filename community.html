@@ -1,26 +1,47 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>IUEA Student Community Chat and Study Groups | IUEA Connect</title>
-<meta name="description" content="Join the IUEA student community: a live group chat for every faculty, project ideas, teammates and study groups at the International University of East Africa.">
+<meta name="description" content="Join the IUEA student community: a live group chat for every faculty, a project feed, teammates and study groups at the International University of East Africa.">
 <link rel="canonical" href="https://gabrielmukamba.github.io/iuea-connect/community.html"><link rel="icon" href="images/iuea-logo.png"><meta name="theme-color" content="#6e1220">
 <meta property="og:type" content="website"><meta property="og:site_name" content="IUEA Connect"><meta property="og:title" content="IUEA Student Community Chat and Study Groups | IUEA Connect">
-<meta property="og:description" content="A live group chat and study groups for students from every faculty at IUEA."><meta property="og:url" content="https://gabrielmukamba.github.io/iuea-connect/community.html">
+<meta property="og:description" content="A live group chat, project feed and study groups for students from every faculty at IUEA."><meta property="og:url" content="https://gabrielmukamba.github.io/iuea-connect/community.html">
 <meta property="og:image" content="https://gabrielmukamba.github.io/iuea-connect/images/iuea-logo.png"><meta property="og:image:alt" content="IUEA logo"><meta name="twitter:card" content="summary">
 <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="extra.css"></head><body>
-<section class="page-hero"><div class="wrap"><h1>Community</h1><p class="lead">Chat with every faculty, post ideas, find teammates and start study groups.</p>
-<a class="btn alt" href="#chat" style="margin-top:14px">Join the community chat</a></div></section>
-<section><div class="wrap"><h2>Share a project idea or request</h2>
-<form class="card" id="postForm"><input name="name" placeholder="Your name" required maxlength="60">
-<select name="faculty"><option>Engineering</option><option>Science and Technology</option><option>Business and Management</option><option>Law</option><option>Other</option></select><select name="type"><option>Project idea</option><option>Looking for teammates</option><option>Question</option><option>Announcement</option></select>
-<input name="title" placeholder="Title" required maxlength="100"><textarea name="body" rows="3" placeholder="Describe what you need" maxlength="500"></textarea>
-<button class="btn" type="submit">Post</button></form><h2 style="margin-top:30px">Latest posts</h2><div class="grid" id="postList"></div></div></section>
+<section class="page-hero"><div class="wrap"><h1>Community</h1><p class="lead">Chat with every faculty, share your projects, find teammates and start study groups.</p>
+<div class="members">👥 <b id="memberCount">–</b> members</div>
+<a class="btn alt" href="#join" style="margin-top:12px">Join the community</a><a class="btn ghost" href="#chat" style="margin-top:12px">Open the chat</a></div></section>
+
+<section id="join"><div class="wrap">
+<div class="card" id="joinBox"><h2>Join the community</h2><p>Create a free account with your email to chat, post and comment. Your email is never shown to other members.</p>
+<div class="tabs"><button class="btn alt" type="button" data-tab="signup">Create account</button><button class="btn ghost" type="button" data-tab="login">Log in</button></div>
+<form class="authform" id="signupForm"><input id="suName" placeholder="Your name" required maxlength="40" autocomplete="name"><input id="suEmail" type="email" placeholder="Email address" required autocomplete="email"><input id="suPass" type="password" placeholder="Password (at least 6 characters)" required minlength="6" autocomplete="new-password"><button class="btn" type="submit">Join IUEA Connect</button></form>
+<form class="authform" id="loginForm" hidden><input id="liEmail" type="email" placeholder="Email address" required autocomplete="email"><input id="liPass" type="password" placeholder="Password" required autocomplete="current-password"><button class="btn" type="submit">Log in</button><a href="#" id="forgot">Forgot password?</a></form>
+<p class="status" id="authMsg" hidden></p></div>
+<div class="userbar" id="userBar" hidden><span>Signed in as <b id="userName"></b></span><button class="btn ghost" id="signOutBtn" type="button">Sign out</button></div>
+</div></section>
+
+<section><div class="wrap"><h2>Community feed</h2>
+<form class="card" id="postBox"><textarea id="pText" rows="3" placeholder="Share a project, idea or question with the community..." required maxlength="1000"></textarea>
+<div class="row2"><select id="pTag"><option>Project</option><option>Idea</option><option>Question</option><option>Looking for teammates</option><option>Announcement</option></select>
+<select id="pFaculty"><option>Engineering</option><option>Science and Technology</option><option>Business and Management</option><option>Law</option><option>Other</option></select></div>
+<input id="pLink" type="url" placeholder="Link to your project (optional, starts with https://)" maxlength="300">
+<label class="filebtn">📷 Add a photo<input id="pPhoto" type="file" accept="image/*" hidden></label><small id="pFile"></small>
+<button class="btn" type="submit">Post</button><p class="status" id="postMsg" hidden></p></form>
+<div id="feedList" style="margin-top:24px"></div></div></section>
+
 <section><div class="wrap"><h2>Start a study group</h2>
 <form class="card" id="groupForm"><select name="faculty"><option>Engineering</option><option>Science and Technology</option><option>Business and Management</option><option>Law</option><option>Other</option></select><input name="title" placeholder="Group name or course" required maxlength="100">
 <textarea name="body" rows="2" placeholder="When and where will you meet?" maxlength="300"></textarea><input type="email" name="contact" placeholder="Contact email" required>
 <button class="btn" type="submit">Create group</button></form><h2 style="margin-top:30px">Study groups</h2><div class="grid" id="groupList"></div></div></section>
-<section id="chat"><div class="wrap"><h2>Community chat</h2><p>One live room for every IUEA student. Type your name, say hello and chat with students from all faculties.</p>
-<div class="chat"><div class="chat-head"><div>IUEA Community</div><span>Live</span></div><div id="chatBox"><p>Loading messages...</p></div>
-<form class="chat-form" id="chatForm"><input id="chatName" placeholder="Your name" maxlength="40" required autocomplete="nickname">
-<input id="chatText" placeholder="Type a message" maxlength="500" required autocomplete="off"><button class="btn alt" type="submit">Send</button></form></div>
+
+<section id="chat"><div class="wrap"><h2>Community chat</h2><p>One live room for every IUEA student. Log in, say hello and share photos, videos, documents, stickers or your location.</p>
+<div class="chat"><div class="chat-head"><div>IUEA Community</div><span>Live</span></div>
+<div class="chat-body"><div id="chatBox"></div><div class="gate" id="chatGate"><p>Join or log in above to read and send messages.<br><a href="#join">Go to sign up</a></p></div></div>
+<div class="sheet" id="attachSheet" hidden>
+<button type="button" data-a="doc"><span>📄</span>Document</button><button type="button" data-a="gallery"><span>🖼️</span>Gallery</button><button type="button" data-a="camera"><span>📷</span>Camera</button><button type="button" data-a="location"><span>📍</span>Location</button><button type="button" data-a="sticker"><span>😎</span>Stickers</button></div>
+<div class="panel" id="emojiPanel" hidden></div>
+<form class="chat-form" id="chatForm"><button class="ic" type="button" id="emojiBtn" aria-label="Emoji and stickers">😊</button>
+<input id="chatText" placeholder="Type a message" maxlength="500" autocomplete="off"><button class="ic" type="button" id="attachBtn" aria-label="Attach">📎</button><button class="ic" type="button" id="camBtn" aria-label="Camera">📷</button><button class="send" type="submit" aria-label="Send">➤</button></form></div>
+<input type="file" id="fileDoc" hidden accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip"><input type="file" id="fileMedia" hidden accept="image/*,video/*"><input type="file" id="fileCam" hidden accept="image/*" capture="environment">
 <p class="status" id="chatErr" hidden></p>
-<div class="note"><p><b>Chat rules:</b> be respectful, no hate, bullying or spam, and do not share phone numbers, passwords or other private details. Messages are public and visible to anyone with this page. The founder can remove messages that break these rules.</p></div></div></section>
+<div class="note"><p><b>Chat rules:</b> be respectful, no hate, bullying or spam, and do not share passwords or other private details. Messages are visible to all members. Share your location only if you are comfortable with everyone seeing it. The founder can remove content that breaks these rules.</p></div></div></section>
 <script src="app.js"></script><script type="module" src="firebase.js"></script></body></html>
