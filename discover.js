@@ -1,3 +1,4 @@
+(() => {
 const GEMINI_KEY="AQ.Ab8RN6IUbsbyEiiK9gTJTQDVioOjwCWNvTR3e7SJhmJN9Nzzxg";
 const CSE_ID="b64b3285db0cd45c3";
 // If one model name stops working, the next one is tried automatically
@@ -44,7 +45,6 @@ async function drawNews(){
     return `<div class="card top"><span class="tag">${esc(FEEDS[cat][0])}</span><h3>${okUrl(n.link)?`<a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">${esc(plain(n.title))}</a>`:esc(plain(n.title))}</h3>${d?`<p>${esc(d.slice(0,200))}${d.length>200?"...":""}</p>`:""}<small>${esc(when(n.date))}</small></div>`}).join("");
 }
 $("cats").addEventListener("click",e=>{const b=e.target.closest("button");if(b){cat=+b.dataset.c;drawNews()}});
-drawNews();
 
 // Search (Google Programmable Search Engine)
 function loadSearch(){
@@ -95,4 +95,8 @@ async function ask(q){
 $("aiForm").addEventListener("submit",e=>{e.preventDefault();const t=$("aiText").value;$("aiText").value="";ask(t)});
 $("aiChips").addEventListener("click",e=>{const b=e.target.closest("button");if(b)ask(b.textContent)});
 
-const start=location.hash.slice(1);show(["news","search","ask"].includes(start)?start:"news");
+// Start
+drawNews();
+const start=location.hash.slice(1);
+show(["news","search","ask"].includes(start)?start:"news");
+})();
