@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Discover: World News, Search and AI Assistant for IUEA Students | IUEA Connect</title>
+<meta name="description" content="Read world and Africa news, search trusted websites and ask an AI assistant, all inside IUEA Connect, the student platform for the International University of East Africa.">
+<link rel="canonical" href="https://gabrielmukamba.github.io/iuea-connect/discover.html"><link rel="icon" href="images/iuea-logo.png"><meta name="theme-color" content="#6e1220">
+<meta property="og:type" content="website"><meta property="og:site_name" content="IUEA Connect"><meta property="og:title" content="Discover: World News, Search and AI Assistant | IUEA Connect">
+<meta property="og:description" content="World news, trusted-site search and an AI assistant for IUEA students."><meta property="og:url" content="https://gabrielmukamba.github.io/iuea-connect/discover.html">
+<meta property="og:image" content="https://gabrielmukamba.github.io/iuea-connect/images/iuea-logo.png"><meta property="og:image:alt" content="IUEA logo"><meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="discover.css"></head><body>
+<section class="page-hero"><div class="wrap"><h1>Discover</h1><p class="lead">World news, search and an AI assistant, all inside IUEA Connect.</p></div></section>
+<section><div class="wrap">
+<div class="dtabs"><button class="btn alt" type="button" data-p="news">🌍 World news</button><button class="btn ghost" type="button" data-p="search">🔎 Search</button><button class="btn ghost" type="button" data-p="ask">🤖 Ask AI</button></div>
+
+<div id="p-news"><div class="cats" id="cats"></div><div class="grid" id="newsList"></div><p class="status" id="newsMsg" hidden></p>
+<p class="credit">Headlines from BBC News. Tap a story to read it on the BBC website.</p></div>
+
+<div id="p-search" hidden><p>Search trusted websites without leaving IUEA Connect, including IUEA, Wikipedia, news and learning sites.</p>
+<div class="cse-wrap"><div class="gcse-search" data-linkTarget="_blank"></div></div><p class="status" id="searchMsg" hidden></p></div>
+
+<div id="p-ask" hidden><p>Ask about your studies, careers, technology or world events.</p>
+<div class="ai"><div class="aibox" id="aiBox"><div class="amsg bot">Hi! I'm the IUEA Connect assistant. What would you like to know?</div></div>
+<form class="aiform" id="aiForm"><input id="aiText" placeholder="Ask anything..." maxlength="500" required autocomplete="off"><button class="btn alt" type="submit">Ask</button></form></div>
+<div class="chips" id="aiChips"><button type="button">What can I do after Civil Engineering?</button><button type="button">Explain Python for beginners</button><button type="button">What is happening in Africa today?</button><button type="button">Tips for passing exams</button></div>
+<p class="credit">AI answers can contain mistakes, so check important facts with official sources. Questions are sent to Google's Gemini service. Do not share personal information.</p></div>
+</div></section>
+<script src="app.js"></script><script src="discover.js"></script></body></html>

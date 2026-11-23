@@ -1,5 +1,5 @@
 const SIGNUP="https://applicant.iuea.ac.ug/signup";
-const PAGES=[["index.html","Home"],["about.html","About IUEA"],["faculties.html","Faculties"],["community.html","Community"],["resources.html","Resources"],["apply.html","Apply"],["contact.html","Contact"]];
+const PAGES=[["index.html","Home"],["about.html","About IUEA"],["faculties.html","Faculties"],["community.html","Community"],["discover.html","Discover"],["resources.html","Resources"],["apply.html","Apply"],["contact.html","Contact"]];
 const API="http://127.0.0.1:5000/api";
 const here=location.pathname.split("/").pop()||"index.html";
 const SOCIAL=`<div class="social-pills" style="margin-top:14px">
@@ -19,7 +19,7 @@ document.body.insertAdjacentHTML("beforeend",`<footer class="site-footer"><div c
 <div class="foot-cta"><img src="images/iuea-logo.png" alt="IUEA logo" onerror="this.style.display='none'"><p>Kampala · Science, Business, Engineering &amp; Law.</p>
 <a class="btn alt" href="${SIGNUP}" target="_blank" rel="noopener">Join IUEA</a><a class="btn ghost" href="mailto:info@iuea.ac.ug">Request Info</a><a class="btn ghost" href="https://gabrielmukamba.github.io/iuea-equal/" target="_blank" rel="noopener">IUEA EQUAL</a></div>
 <div class="foot-grid"><div><h4>Quick links</h4><ul>
-<li><a href="community.html">Community</a></li><li><a href="resources.html">Resources</a></li><li><a href="apply.html">Apply</a></li><li><a href="contact.html">Contact</a></li><li><a href="privacy.html">Privacy</a></li>
+<li><a href="community.html">Community</a></li><li><a href="discover.html">Discover</a></li><li><a href="resources.html">Resources</a></li><li><a href="apply.html">Apply</a></li><li><a href="contact.html">Contact</a></li><li><a href="privacy.html">Privacy</a></li>
 <li><a href="https://gabrielmukamba.github.io/iuea-equal/" target="_blank" rel="noopener">IUEA EQUAL</a></li>
 <li><a href="https://iuea.ac.ug" target="_blank" rel="noopener">IUEA website</a></li><li><a href="https://vote.iuea.ac.ug/vote" target="_blank" rel="noopener">IUEA Ballot</a></li></ul></div>
 <div><h4>Contact</h4><address>Plot No. 11/13, Kansanga Ggaba Rd, P.O. Box 23332, Kampala, Uganda
