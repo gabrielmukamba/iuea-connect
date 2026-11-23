@@ -1,8 +1,6 @@
 (() => {
-const GEMINI_KEY="AQ.Ab8RN6IUbsbyEiiK9gTJTQDVioOjwCWNvTR3e7SJhmJN9Nzzxg";
+const AI_URL="https://iuea-ai.gabrielmukamba7.workers.dev";
 const CSE_ID="b64b3285db0cd45c3";
-// If one model name stops working, the next one is tried automatically
-const MODELS=["gemini-3.8-flash","gemini-3.6-flash","gemini-3.5-flash-lite"];
 const FEEDS=[["World","https://feeds.bbci.co.uk/news/world/rss.xml"],["Africa","https://feeds.bbci.co.uk/news/world/africa/rss.xml"],["Technology","https://feeds.bbci.co.uk/news/technology/rss.xml"],["Science","https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"],["Business","https://feeds.bbci.co.uk/news/business/rss.xml"],["Education","https://feeds.bbci.co.uk/news/education/rss.xml"]];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -64,21 +62,16 @@ async function context(){
   return `\n\nToday's date: ${new Date().toDateString()}.\nLatest headlines (BBC News):\n${lines||"(not available)"}`;
 }
 async function gemini(sys,contents){
-  for(const m of MODELS){
-    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(GEMINI_KEY)}`,{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents,generationConfig:{maxOutputTokens:2048}})});
-    if(r.status===404)continue;
-    if(!r.ok)throw {status:r.status};
-    const j=await r.json();
-    const t=(j.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("").trim();
-    if(!t)throw {status:0};
-    return t;
-  }
-  throw {status:404};
+  const r=await fetch(AI_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({system:sys,contents})});
+  if(!r.ok)throw {status:r.status};
+  const j=await r.json();
+  const t=(j.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("").trim();
+  if(!t)throw {status:0};
+  return t;
 }
 async function ask(q){
   q=q.trim().slice(0,500);if(!q||busy)return;
-  if(GEMINI_KEY.startsWith("PASTE")){bubble("bot","The AI assistant is being set up. Please check back soon.");return}
+  if(AI_URL.startsWith("PASTE")){bubble("bot","The AI assistant is being set up. Please check back soon.");return}
   if(Date.now()-lastAsk<4000){bubble("bot","Please wait a few seconds between questions.");return}
   lastAsk=Date.now();busy=true;
   bubble("user",esc(q));const wait=bubble("bot","Thinking...");
@@ -88,7 +81,7 @@ async function ask(q){
     hist.push({role:"model",parts:[{text:ans}]});wait.innerHTML=fmt(ans);
   }catch(e){
     hist.pop();
-    wait.textContent=e.status===429?"The assistant is busy right now. Please try again in a minute.":e.status===403||e.status===400?"The assistant is not available right now. Please try again later.":"Sorry, something went wrong. Please try again.";
+    wait.textContent=e.status===429?"The assistant is busy right now. Please try again in a minute.":e.status===403||e.status===400?"The assistant is not available right now. Please try again later.":"Sorry, something went wrong (code "+(e.status??"network")+"). Please try again.";
   }
   busy=false;$("aiBox").scrollTop=$("aiBox").scrollHeight;
 }
