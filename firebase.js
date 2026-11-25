@@ -10,9 +10,9 @@ const CONFIG={
   messagingSenderId:"194358711293",
   appId:"1:194358711293:web:aee6026e409a734e02ff94"
 };
-// Part 3 explains these two values (photo, video and document sharing)
+// Photo, video, document and profile picture uploads (Cloudinary). Keep your own values here.
 const CLOUD={name:"rjjzbgbm",preset:"iuea_connect"};
-const mediaReady=Boolean(CLOUD.name)&&CLOUD.name!=="YOUR_CLOUD_NAME_HERE"&&CLOUD.name!=="PASTE_CLOUD_NAME";
+const mediaReady=CLOUD.name!=="PASTE_CLOUD_NAME";
 
 const app=initializeApp(CONFIG),auth=getAuth(app),db=getFirestore(app);
 const $=id=>document.getElementById(id);
@@ -24,11 +24,39 @@ const ago=ts=>{if(!ts)return"just now";const s=Math.max(0,Date.now()/1000-ts.sec
 const ERR={"auth/email-already-in-use":"That email is already registered. Try logging in.","auth/invalid-credential":"Wrong email or password.","auth/wrong-password":"Wrong email or password.","auth/user-not-found":"Wrong email or password.","auth/weak-password":"The password must have at least 6 characters.","auth/invalid-email":"Please enter a valid email address.","auth/operation-not-allowed":"Email sign-in is not switched on yet.","auth/too-many-requests":"Too many attempts. Please wait and try again.","auth/network-request-failed":"No internet connection."};
 const fe=e=>ERR[e.code]||"Something went wrong. Please try again.";
 const myName=()=>((auth.currentUser&&auth.currentUser.displayName)||"Member").slice(0,40);
+const photoOf=u=>u&&cloudOk(u.photoURL)?u.photoURL:"";
+const avatar=(name,photo,size)=>cloudOk(photo)
+  ?`<img class="av ${size||""}" src="${esc(photo)}" alt="" loading="lazy">`
+  :`<span class="av ${size||""}">${esc(((name||"?").trim().charAt(0)||"?").toUpperCase())}</span>`;
 
+const FACULTIES=["Engineering","Science and Technology","Business and Management","Law","Foundation / Higher Education Certificate","Other"];
+["suFaculty","pfFaculty"].forEach(id=>{const s=$(id);if(s)s.innerHTML='<option value="">Faculty (optional)</option>'+FACULTIES.map(f=>`<option>${f}</option>`).join("")});
+let myProfile={},pendingPhoto="",unsubProfile=null,unsubMembers=null,allProfiles=[],signingUp=false;
 let user=null,posts=[],unsubChat=null,panelTab="emoji";
 const unsubs={};
 const EMOJI="😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 😉 😍 🥰 😘 😎 🤩 🥳 🤔 😮 😢 😭 😡 🙏 👍 👎 👏 🙌 💪 🔥 ❤️ 💯 🎉 🎓 📚 💡 🚀 ✅ ⭐ 🇺🇬 🇨🇩 🌍 🤝 😴 🤗 😜 🙈 🎶 ⚽ ☕ 🍕".split(" ");
 const STICKERS="🎉 👍 ❤️ 😂 🔥 🙏 🎓 🚀 💡 👏 😎 🥳 😍 💯 🤝 🌍".split(" ");
+
+// Uploads
+async function upload(file,fname){
+  if(file.size>25*1024*1024)throw new Error("big");
+  const fd=new FormData();fd.append("file",file,fname||file.name||"file");fd.append("upload_preset",CLOUD.preset);
+  const r=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD.name}/auto/upload`,{method:"POST",body:fd});
+  if(!r.ok)throw new Error("upload");
+  return (await r.json()).secure_url;
+}
+// Profile pictures are cropped to a small square first (smaller file, and the original photo data is removed)
+async function shrink(file,size){
+  const bmp=await createImageBitmap(file);
+  const s=Math.min(bmp.width,bmp.height),sx=(bmp.width-s)/2,sy=(bmp.height-s)/2;
+  const c=document.createElement("canvas");c.width=c.height=size;
+  c.getContext("2d").drawImage(bmp,sx,sy,s,s,0,0,size,size);
+  return await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error("image")),"image/jpeg",0.85));
+}
+async function uploadAvatar(file){
+  if(!file.type.startsWith("image/"))throw new Error("type");
+  return upload(await shrink(file,256),"avatar.jpg");
+}
 
 // Member counter
 if($("memberCount")){
@@ -40,17 +68,26 @@ if($("memberCount")){
 if($("signupForm")){
   document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{const s=b.dataset.tab==="signup";$("signupForm").hidden=!s;$("loginForm").hidden=s;
     document.querySelectorAll("[data-tab]").forEach(x=>x.className="btn "+(x===b?"alt":"ghost"));$("authMsg").hidden=true});
+  $("suPhoto").addEventListener("change",e=>{$("suPhotoName").textContent=e.target.files[0]?e.target.files[0].name:""});
   $("signupForm").addEventListener("submit",async e=>{
-    e.preventDefault();const btn=e.target.querySelector("button");btn.disabled=true;
+    e.preventDefault();const btn=e.target.querySelector("button[type=submit]");btn.disabled=true;signingUp=true;
     try{
       const c=await createUserWithEmailAndPassword(auth,$("suEmail").value.trim(),$("suPass").value);
-      await updateProfile(c.user,{displayName:$("suName").value.trim().slice(0,40)});
+      let photo="",note="";
+      const f=$("suPhoto").files[0];
+      if(f){
+        if(!mediaReady)note=" Photo uploads are being set up, so you can add your photo later.";
+        else{try{photo=await uploadAvatar(f)}catch{note=" Your photo could not be uploaded. You can add it later."}}
+      }
+      const nm=$("suName").value.trim().slice(0,40);
+      await updateProfile(c.user,photo?{displayName:nm,photoURL:photo}:{displayName:nm});
       try{await setDoc(doc(db,"members",c.user.uid),{ts:serverTimestamp()})}catch{}
+      try{await setDoc(doc(db,"profiles",c.user.uid),{name:nm,photo,faculty:$("suFaculty").value,bio:"",ts:serverTimestamp()})}catch{}
       sendEmailVerification(c.user).catch(()=>{});
       user=auth.currentUser;paintAuth();if(window.refreshMembers)window.refreshMembers();
-      say("authMsg","Welcome! We sent a verification link to your email.");
+      say("authMsg","Welcome! We sent a verification link to your email."+note);
     }catch(err){say("authMsg",fe(err))}
-    btn.disabled=false});
+    signingUp=false;btn.disabled=false});
   $("loginForm").addEventListener("submit",async e=>{
     e.preventDefault();const btn=e.target.querySelector("button");btn.disabled=true;
     try{await signInWithEmailAndPassword(auth,$("liEmail").value.trim(),$("liPass").value);$("authMsg").hidden=true}
@@ -61,17 +98,67 @@ if($("signupForm")){
     if(!m)return say("authMsg","Type your email above first, then press Forgot password.");
     try{await sendPasswordResetEmail(auth,m);say("authMsg","Password reset link sent. Check your email.")}catch(err){say("authMsg",fe(err))}});
   $("signOutBtn").addEventListener("click",()=>signOut(auth));
+  // Profile: edit photo, name, faculty and bio
+  const fillForm=()=>{$("pfName").value=user.displayName||"";$("pfFaculty").value=myProfile.faculty||"";$("pfBio").value=myProfile.bio||"";pendingPhoto="";$("pfAvatar").innerHTML=avatar(user.displayName||user.email,photoOf(user),"xl")};
+  $("editProfileBtn").onclick=()=>{const f=$("profileForm");f.hidden=!f.hidden;if(!f.hidden&&user)fillForm();$("profileMsg").hidden=true};
+  $("profilePhoto").addEventListener("change",async e=>{
+    const f=e.target.files[0];e.target.value="";if(!f||!user)return;
+    if(!mediaReady)return say("profileMsg","Photo uploads are being set up. Please check back soon.");
+    say("profileMsg","Uploading your photo...");
+    try{pendingPhoto=await uploadAvatar(f);$("pfAvatar").innerHTML=avatar($("pfName").value,pendingPhoto,"xl");say("profileMsg","Photo ready. Press Save profile.")}
+    catch(err){say("profileMsg",err.message==="type"?"Please choose an image file.":"Could not upload your photo. Please try again.")}});
+  $("profileForm").addEventListener("submit",async e=>{
+    e.preventDefault();if(!user)return;
+    const btn=e.target.querySelector("button[type=submit]");btn.disabled=true;
+    const name=$("pfName").value.trim().slice(0,40),faculty=$("pfFaculty").value,bio=$("pfBio").value.trim().slice(0,160),photo=pendingPhoto||photoOf(user);
+    if(!name){btn.disabled=false;return}
+    try{
+      await updateProfile(auth.currentUser,photo?{displayName:name,photoURL:photo}:{displayName:name});
+      await setDoc(doc(db,"profiles",user.uid),{name,photo,faculty,bio,ts:serverTimestamp()});
+      user=auth.currentUser;pendingPhoto="";paintAuth();$("profileForm").hidden=true;say("profileMsg","Profile saved!");
+    }catch(err){say("profileMsg","Could not save your profile. Please try again.")}
+    btn.disabled=false});
 }
 const needJoin=()=>{say("authMsg","Please create an account or log in to continue.");const j=$("join");if(j)j.scrollIntoView({behavior:"smooth"})};
 
 onAuthStateChanged(auth,u=>{user=u;paintAuth()});
 function paintAuth(){
   if($("joinBox"))$("joinBox").hidden=!!user;
-  if($("userBar")){$("userBar").hidden=!user;if(user)$("userName").textContent=user.displayName||user.email}
+  if($("userBar")){$("userBar").hidden=!user;
+    if(user){$("userName").textContent=user.displayName||user.email;$("userFaculty").textContent=myProfile.faculty||"";$("myAvatar").innerHTML=avatar(user.displayName||user.email,photoOf(user),"xl")}}
   if($("chatGate"))$("chatGate").hidden=!!user;
-  if(user)startChat();else stopChat();
+  if($("memGate"))$("memGate").hidden=!!user;
+  if($("memBox"))$("memBox").hidden=!user;
+  if(user){startChat();startProfile();startMembers()}else{stopChat();stopProfile();stopMembers()}
   drawFeed();
 }
+// My own profile (created automatically for members who joined before profiles existed)
+function startProfile(){
+  if(unsubProfile||!user)return;
+  const uid=user.uid;
+  unsubProfile=onSnapshot(doc(db,"profiles",uid),s=>{
+    if(s.exists()){myProfile=s.data();if($("userFaculty"))$("userFaculty").textContent=myProfile.faculty||"";return}
+    if(signingUp||s.metadata.fromCache)return;
+    myProfile={};
+    setDoc(doc(db,"profiles",uid),{name:myName(),photo:photoOf(auth.currentUser),faculty:"",bio:"",ts:serverTimestamp()}).catch(()=>{});
+  },()=>{});
+}
+function stopProfile(){if(unsubProfile){unsubProfile();unsubProfile=null}myProfile={}}
+// Members directory (only for signed-in members)
+function startMembers(){
+  if(unsubMembers||!$("memList"))return;
+  unsubMembers=onSnapshot(query(collection(db,"profiles"),orderBy("ts","desc"),limit(300)),snap=>{
+    allProfiles=snap.docs.map(d=>({id:d.id,...d.data({serverTimestamps:"estimate"})}));drawMembers()},
+    ()=>{$("memList").innerHTML="<p>Could not load members right now.</p>"});
+}
+function stopMembers(){if(unsubMembers){unsubMembers();unsubMembers=null}allProfiles=[];if($("memList"))$("memList").innerHTML=""}
+function drawMembers(){
+  const q=(($("memSearch")&&$("memSearch").value)||"").trim().toLowerCase();
+  const rows=allProfiles.filter(p=>!q||(p.name||"").toLowerCase().includes(q)||(p.faculty||"").toLowerCase().includes(q));
+  $("memCountText").textContent=rows.length+(rows.length===1?" member":" members");
+  $("memList").innerHTML=rows.length?rows.map(p=>`<div class="mcard">${avatar(p.name,p.photo,"xl")}<b>${esc(p.name||"Member")}</b>${p.faculty?`<span class="tag">${esc(p.faculty)}</span>`:""}${p.bio?`<p>${esc(p.bio)}</p>`:""}${user&&p.id===user.uid?"<small>This is you</small>":""}</div>`).join(""):"<p>No members found.</p>";
+}
+if($("memSearch"))$("memSearch").addEventListener("input",drawMembers);
 
 // Community chat
 function msgHTML(m){
@@ -84,7 +171,7 @@ function msgHTML(m){
   else if(m.type==="file"&&cloudOk(m.url))body=`<a class="filecard" href="${esc(m.url)}" target="_blank" rel="noopener">📄 ${esc(m.fname||"Document")}<em>Tap to open</em></a>`;
   else if(m.type==="location"&&typeof m.lat==="number"&&typeof m.lng==="number")body=`<a class="filecard" href="https://www.google.com/maps?q=${m.lat},${m.lng}" target="_blank" rel="noopener">📍 Shared location<em>Open in Maps</em></a>`;
   else body=esc(m.text||"");
-  return `<div class="msg${me?" me":""}"><b>${me?"You":esc(m.name)}</b>${body}<small>${t}</small></div>`;
+  return `<div class="msg${me?" me":""}"><div class="mh">${avatar(m.name,m.photo,"sm")}<b>${me?"You":esc(m.name)}</b></div>${body}<small>${t}</small></div>`;
 }
 function startChat(){
   const box=$("chatBox");if(!box||unsubChat)return;
@@ -102,15 +189,8 @@ async function sendMsg(data){
   if(!user){needJoin();return false}
   if(Date.now()-last<1500){say("chatErr","Please wait a moment before sending again.");return false}
   last=Date.now();
-  try{await addDoc(collection(db,"connect_chat"),{uid:user.uid,name:myName(),...data,ts:serverTimestamp()});$("chatErr").hidden=true;return true}
+  try{await addDoc(collection(db,"connect_chat"),{uid:user.uid,name:myName(),photo:photoOf(user),...data,ts:serverTimestamp()});$("chatErr").hidden=true;return true}
   catch(e){say("chatErr","Message not sent. Please try again.");return false}
-}
-async function upload(file){
-  if(file.size>25*1024*1024)throw new Error("big");
-  const fd=new FormData();fd.append("file",file);fd.append("upload_preset",CLOUD.preset);
-  const r=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD.name}/auto/upload`,{method:"POST",body:fd});
-  if(!r.ok)throw new Error("upload");
-  return (await r.json()).secure_url;
 }
 const kindOf=f=>f.type.startsWith("image/")?"image":f.type.startsWith("video/")?"video":"file";
 async function sendFile(f){
@@ -144,7 +224,7 @@ if($("chatForm")){
 
 // Community feed (posts, likes, comments)
 const feed=$("feedList");
-const postHTML=p=>`<div class="head"><div class="avatar">${esc((p.name||"?")[0].toUpperCase())}</div><div class="meta"><b>${esc(p.name)}</b><br><small class="when"></small></div></div>
+const postHTML=p=>`<div class="head">${avatar(p.name,p.photo,"lg")}<div class="meta"><b>${esc(p.name)}</b><br><small class="when"></small></div></div>
 <div><span class="tag">${esc(p.tag)}</span><span class="tag">${esc(p.faculty)}</span></div>
 <p class="ptext">${esc(p.text)}</p>
 ${cloudOk(p.image)?`<img class="photo" src="${esc(p.image)}" alt="Photo shared by ${esc(p.name)}" loading="lazy">`:""}
@@ -183,7 +263,7 @@ if(feed){
       if(!box.hidden){box.hidden=true;if(unsubs[id]){unsubs[id]();delete unsubs[id]}return}
       box.hidden=false;
       unsubs[id]=onSnapshot(query(collection(db,"connect_posts",id,"comments"),orderBy("ts","asc"),limit(100)),s=>{
-        box.querySelector(".clist").innerHTML=s.docs.map(d=>{const m=d.data({serverTimestamps:"estimate"});return `<div class="comment"><b>${esc(m.name)}</b> ${esc(m.text)}</div>`}).join("")||"<p>No comments yet.</p>"});
+        box.querySelector(".clist").innerHTML=s.docs.map(d=>{const m=d.data({serverTimestamps:"estimate"});return `<div class="comment">${avatar(m.name,m.photo,"sm")}<div><b>${esc(m.name)}</b> ${esc(m.text)}</div></div>`}).join("")||"<p>No comments yet.</p>"});
     }else if(e.target.closest(".del")){
       if(confirm("Delete this post?"))deleteDoc(doc(db,"connect_posts",id)).catch(()=>{});
     }});
@@ -191,7 +271,7 @@ if(feed){
     const f=e.target.closest(".cform");if(!f)return;e.preventDefault();
     if(!user)return needJoin();
     const inp=f.querySelector("input"),text=inp.value.trim();if(!text)return;
-    try{await addDoc(collection(db,"connect_posts",f.closest(".post").dataset.id,"comments"),{uid:user.uid,name:myName(),text:text.slice(0,300),ts:serverTimestamp()});inp.value=""}catch{}});
+    try{await addDoc(collection(db,"connect_posts",f.closest(".post").dataset.id,"comments"),{uid:user.uid,name:myName(),photo:photoOf(user),text:text.slice(0,300),ts:serverTimestamp()});inp.value=""}catch{}});
 }
 if($("postBox")){
   $("pPhoto").addEventListener("change",e=>{$("pFile").textContent=e.target.files[0]?e.target.files[0].name:""});
@@ -203,7 +283,7 @@ if($("postBox")){
       let image="";const f=$("pPhoto").files[0];
       if(f){if(!mediaReady)throw new Error("media");image=await upload(f)}
       const link=$("pLink").value.trim();
-      await addDoc(collection(db,"connect_posts"),{uid:user.uid,name:myName(),text,tag:$("pTag").value,faculty:$("pFaculty").value,link:httpsOk(link)?link:"",image,likedBy:[],ts:serverTimestamp()});
+      await addDoc(collection(db,"connect_posts"),{uid:user.uid,name:myName(),photo:photoOf(user),text,tag:$("pTag").value,faculty:$("pFaculty").value,link:httpsOk(link)?link:"",image,likedBy:[],ts:serverTimestamp()});
       e.target.reset();$("pFile").textContent="";say("postMsg","Posted!");
     }catch(err){say("postMsg",err.message==="media"?"Photo sharing is being set up. Post without a photo for now.":err.message==="big"?"That photo is larger than 25 MB.":"Could not post. Please try again.")}
     btn.disabled=false});

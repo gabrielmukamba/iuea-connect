@@ -1,22 +1,33 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>IUEA Student Community Chat and Study Groups | IUEA Connect</title>
-<meta name="description" content="Join the IUEA student community: a live group chat for every faculty, a project feed, teammates and study groups at the International University of East Africa.">
+<meta name="description" content="Join the IUEA student community: create your profile, chat live with every faculty, share projects and start study groups at the International University of East Africa.">
 <link rel="canonical" href="https://gabrielmukamba.github.io/iuea-connect/community.html"><link rel="icon" href="images/iuea-logo.png"><meta name="theme-color" content="#6e1220">
 <meta property="og:type" content="website"><meta property="og:site_name" content="IUEA Connect"><meta property="og:title" content="IUEA Student Community Chat and Study Groups | IUEA Connect">
-<meta property="og:description" content="A live group chat, project feed and study groups for students from every faculty at IUEA."><meta property="og:url" content="https://gabrielmukamba.github.io/iuea-connect/community.html">
+<meta property="og:description" content="A live group chat, student profiles, project feed and study groups for every faculty at IUEA."><meta property="og:url" content="https://gabrielmukamba.github.io/iuea-connect/community.html">
 <meta property="og:image" content="https://gabrielmukamba.github.io/iuea-connect/images/iuea-logo.png"><meta property="og:image:alt" content="IUEA logo"><meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="extra.css"></head><body>
-<section class="page-hero"><div class="wrap"><h1>Community</h1><p class="lead">Chat with every faculty, share your projects, find teammates and start study groups.</p>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="extra.css"><link rel="stylesheet" href="more.css"></head><body>
+<section class="page-hero"><div class="wrap"><h1>Community</h1><p class="lead">Create your profile, chat with every faculty, share your projects and start study groups.</p>
 <div class="members">👥 <b id="memberCount">–</b> members</div>
-<a class="btn alt" href="#join" style="margin-top:12px">Join the community</a><a class="btn ghost" href="#chat" style="margin-top:12px">Open the chat</a></div></section>
+<a class="btn alt" href="#join" style="margin-top:12px">Join the community</a><a class="btn ghost" href="#chat" style="margin-top:12px">Open the chat</a><a class="btn ghost" href="members.html" style="margin-top:12px">See members</a></div></section>
 
 <section id="join"><div class="wrap">
-<div class="card" id="joinBox"><h2>Join the community</h2><p>Create a free account with your email to chat, post and comment. Your email is never shown to other members.</p>
+<div class="card" id="joinBox"><h2>Join the community</h2><p>Create a free account with your email, add your photo and faculty, and let everyone at IUEA recognise you. Your email is never shown to other members.</p>
 <div class="tabs"><button class="btn alt" type="button" data-tab="signup">Create account</button><button class="btn ghost" type="button" data-tab="login">Log in</button></div>
-<form class="authform" id="signupForm"><input id="suName" placeholder="Your name" required maxlength="40" autocomplete="name"><input id="suEmail" type="email" placeholder="Email address" required autocomplete="email"><input id="suPass" type="password" placeholder="Password (at least 6 characters)" required minlength="6" autocomplete="new-password"><button class="btn" type="submit">Join IUEA Connect</button></form>
+<form class="authform" id="signupForm"><input id="suName" placeholder="Your full name" required maxlength="40" autocomplete="name"><select id="suFaculty"></select><input id="suEmail" type="email" placeholder="Email address" required autocomplete="email"><input id="suPass" type="password" placeholder="Password (at least 6 characters)" required minlength="6" autocomplete="new-password">
+<label class="filebtn">📷 Add a profile photo (optional)<input id="suPhoto" type="file" accept="image/*" hidden></label><small id="suPhotoName"></small>
+<button class="btn" type="submit">Join IUEA Connect</button></form>
 <form class="authform" id="loginForm" hidden><input id="liEmail" type="email" placeholder="Email address" required autocomplete="email"><input id="liPass" type="password" placeholder="Password" required autocomplete="current-password"><button class="btn" type="submit">Log in</button><a href="#" id="forgot">Forgot password?</a></form>
 <p class="status" id="authMsg" hidden></p></div>
-<div class="userbar" id="userBar" hidden><span>Signed in as <b id="userName"></b></span><button class="btn ghost" id="signOutBtn" type="button">Sign out</button></div>
+
+<div class="card userbar" id="userBar" hidden>
+<div class="who"><span id="myAvatar"></span><div><b id="userName"></b><br><small id="userFaculty"></small></div></div>
+<div class="ubtns"><button class="btn alt" id="editProfileBtn" type="button">Edit profile</button><a class="btn ghost" href="members.html">Members</a><button class="btn ghost" id="signOutBtn" type="button">Sign out</button></div>
+<form class="authform" id="profileForm" hidden>
+<div class="photorow"><span id="pfAvatar"></span><label class="filebtn">📷 Change photo<input id="profilePhoto" type="file" accept="image/*" hidden></label></div>
+<input id="pfName" placeholder="Your full name" maxlength="40" required><select id="pfFaculty"></select>
+<textarea id="pfBio" rows="2" maxlength="160" placeholder="A short line about you, such as your course or what you are building (optional)"></textarea>
+<button class="btn" type="submit">Save profile</button></form>
+<p class="status" id="profileMsg" hidden></p></div>
 </div></section>
 
 <section><div class="wrap"><h2>Community feed</h2>
@@ -43,5 +54,5 @@
 <input id="chatText" placeholder="Type a message" maxlength="500" autocomplete="off"><button class="ic" type="button" id="attachBtn" aria-label="Attach">📎</button><button class="ic" type="button" id="camBtn" aria-label="Camera">📷</button><button class="send" type="submit" aria-label="Send">➤</button></form></div>
 <input type="file" id="fileDoc" hidden accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip"><input type="file" id="fileMedia" hidden accept="image/*,video/*"><input type="file" id="fileCam" hidden accept="image/*" capture="environment">
 <p class="status" id="chatErr" hidden></p>
-<div class="note"><p><b>Chat rules:</b> be respectful, no hate, bullying or spam, and do not share passwords or other private details. Messages are visible to all members. Share your location only if you are comfortable with everyone seeing it. The founder can remove content that breaks these rules.</p></div></div></section>
+<div class="note"><p><b>Chat rules:</b> be respectful, no hate, bullying or spam, and do not share passwords or other private details. Your name and profile photo are shown next to your messages. Messages are visible to all members. Share your location only if you are comfortable with everyone seeing it. The founder can remove content that breaks these rules.</p></div></div></section>
 <script src="app.js"></script><script type="module" src="firebase.js"></script></body></html>
