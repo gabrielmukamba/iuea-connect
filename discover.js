@@ -54,11 +54,12 @@ function loadSearch(){
 // Ask AI
 const SYS="You are the IUEA Connect assistant, a friendly and accurate AI for students of the International University of East Africa (IUEA) in Kampala, Uganda. Help with studies, careers, technology, languages, general knowledge and world events. Keep answers clear and fairly short, in simple words. You have no live internet access. For recent events use only the headlines supplied below, and if you are not sure something is current, say so and suggest the World news tab or an official source. Do not present medical, legal or financial advice as certain. Never ask users for personal information.";
 let hist=[],busy=false,lastAsk=0;
-const fmt=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>");
+const fmt=t=>esc(t).replace(/^#{1,6}\s+(.+)$/gm,"<b>$1</b>").replace(/^\s*[*-]\s+/gm,"\u2022 ").replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>");
 function bubble(cls,html){const d=document.createElement("div");d.className="amsg "+cls;d.innerHTML=html;$("aiBox").appendChild(d);$("aiBox").scrollTop=$("aiBox").scrollHeight;return d}
+const quick=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(()=>r(null),ms))]);
 async function context(){
-  const a=(await getFeed(FEEDS[0][1]))||[],b=(await getFeed(FEEDS[1][1]))||[];
-  const lines=[...a.slice(0,6),...b.slice(0,4)].map(n=>"- "+plain(n.title)).join("\n");
+  const [a,b]=await Promise.all([quick(getFeed(FEEDS[0][1]),3000),quick(getFeed(FEEDS[1][1]),3000)]);
+  const lines=[...(a||[]).slice(0,6),...(b||[]).slice(0,4)].map(n=>"- "+plain(n.title)).join("\n");
   return `\n\nToday's date: ${new Date().toDateString()}.\nLatest headlines (BBC News):\n${lines||"(not available)"}`;
 }
 async function gemini(sys,contents){
@@ -81,7 +82,7 @@ async function ask(q){
     hist.push({role:"model",parts:[{text:ans}]});wait.innerHTML=fmt(ans);
   }catch(e){
     hist.pop();
-    wait.textContent=e.status===429?"The assistant is busy right now. Please try again in a minute.":e.status===403||e.status===400?"The assistant is not available right now. Please try again later.":"Sorry, something went wrong (code "+(e.status??"network")+"). Please try again.";
+    wait.textContent=(e.status===429||e.status>=500)?"The assistant is busy right now. Please try again in a minute.":e.status===403||e.status===400?"The assistant is not available right now. Please try again later.":"Sorry, something went wrong (code "+(e.status??"network")+"). Please try again.";
   }
   busy=false;$("aiBox").scrollTop=$("aiBox").scrollHeight;
 }
